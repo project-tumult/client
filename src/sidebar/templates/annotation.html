@@ -92,13 +92,13 @@
       </a>
     </div>
 
-    <div class="annotation-replies" ng-if="!vm.isReply() && vm.replyCount > 0">
+<!--     <div class="annotation-replies" ng-if="!vm.isReply() && vm.replyCount > 0">
       <a href=""
         ng-click="vm.onReplyCountClick()">
         <span class="annotation-replies__link">{{ vm.isCollapsed ? 'Show replies' : 'Hide replies' }}</span>
         <span class="annotation-replies__count">({{ vm.replyCount }})</span>
       </a>
-    </div>
+    </div> -->
 
     <div class="annotation-actions" ng-if="vm.isSaving">
       Saving...
@@ -120,12 +120,12 @@
         ng-show="vm.authorize('delete')"
         on-click="vm.delete()"
       ></annotation-action-button>
-      <annotation-action-button
+<!--       <annotation-action-button
         icon="'h-icon-annotation-reply'"
         is-disabled="vm.isDeleted()"
         label="'Reply'"
         on-click="vm.reply()"
-      ></annotation-action-button>
+      ></annotation-action-button> -->
       <span class="annotation-share-dialog-wrapper">
         <annotation-action-button
          icon="'h-icon-annotation-share'"

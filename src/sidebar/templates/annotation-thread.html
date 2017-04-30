@@ -30,7 +30,7 @@
       <p><em>Message not available.</em></p>
     </div>
 
-    <div ng-if="vm.hiddenCount() > 0">
+    <!-- <div ng-if="vm.hiddenCount() > 0">
       <a class="small"
          href=""
          ng-click="vm.showThreadAndReplies()"
@@ -40,10 +40,10 @@
                one: 'View one more in conversation',
                other: 'View {} more in conversation'}"
          ></a>
-    </div>
+    </div> -->
 
     <!-- Replies -->
-    <ul ng-show="!vm.thread.collapsed">
+<!--     <ul ng-show="!vm.thread.collapsed">
       <li ng-repeat="child in vm.thread.children track by child.id"
           ng-show="vm.shouldShowReply(child)">
         <annotation-thread
@@ -53,6 +53,6 @@
           on-force-visible="vm.onForceVisible({thread:thread})">
         </annotation-thread>
       </li>
-    </ul>
+    </ul> -->
   </div>
 </div>
