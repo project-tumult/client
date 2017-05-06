@@ -129,12 +129,13 @@ function Adder(container, options) {
   //On youtube videos
   if(docURI.indexOf("youtube.com") !==-1) {
 
-    //Get the current player reference and send the event when the player is PAUSED
-    var ytPlayer = document.getElementById("movie_player");
-    ytPlayer.addEventListener("onStateChange", function(event) {
-      options.onPlayerStateChange(event);
-    });
-
+    if(docURI.indexOf("youtube.com/watch?v=") !==-1) {
+      //Get the current player reference and send the event when the player is PAUSED
+      var ytPlayer = document.getElementById("movie_player");
+      ytPlayer.addEventListener("onStateChange", function(event) {
+        options.onPlayerStateChange(event);
+      });
+    }
 
     setInterval(function() {
       if(currentState != history.state["spf-referer"]) {

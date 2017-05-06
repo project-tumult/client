@@ -166,6 +166,32 @@ function isAnnotation(annotation) {
     return !isOrphan(annotation);
 }
 
+/** Returns `true` if the given annotation is a media annotation i.e, audio or video
+* Media annotations have the property 'viddata' which is not available in text annotations
+*/
+function isMediaAnnotation(annotation) {
+  return annotation.hasOwnProperty('viddata');
+}
+
+/** Return a numeric key that can be used to sort media annotations by position.
+ *
+ * @return {number} - A key representing the location of the annotation in
+ *                    the document, where lower numbers mean closer to the
+ *                    start.
+ */
+function clipPosition(annotation) {
+  if(annotation) {
+    //ensure this is a media annotation
+    if(isMediaAnnotation(annotation)) {
+      return annotation.viddata[0].starttime;
+    }
+    else
+      return Number.POSITIVE_INFINITY; //This means in text annotation is always last in the clipPosition
+  }
+  return Number.POSITIVE_INFINITY; //When this is not an annotation
+}
+
+
 /** Return a numeric key that can be used to sort annotations by location.
  *
  * @return {number} - A key representing the location of the annotation in
@@ -211,5 +237,7 @@ module.exports = {
   isPublic: isPublic,
   isReply: isReply,
   isWaitingToAnchor: isWaitingToAnchor,
+  isMediaAnnotation: isMediaAnnotation,
+  clipPosition: clipPosition,
   location: location,
 };

@@ -22,7 +22,14 @@ var sortFns = {
   'Oldest': function (a, b) {
     return a.updated < b.updated;
   },
+  //Location in media annotation context should mean clip position
+  //i.e, the start time of the clip
+  //However, when there are text as well as media annotations on a page
+  //media annotations should show before text annotation
   'Location': function (a, b) {
+    if(metadata.isMediaAnnotation(a) || metadata.isMediaAnnotation(b))
+      return metadata.clipPosition(a) < metadata.clipPosition(b);
+    //When both are text annotations, compare them on their location
     return metadata.location(a) < metadata.location(b);
   },
 };
