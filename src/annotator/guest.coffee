@@ -66,6 +66,10 @@ module.exports = class Guest extends Annotator
         self.setVisibleHighlights(true)
         self.createHighlight()
         Annotator.Util.getGlobal().getSelection().removeAllRanges()
+      onSiteNavigatedEvent: (uri) ->
+        self.publish('siteNavigatedEvent', uri)  
+      onPlayerStateChange: (value) ->
+        self.publish('playerStateChanged', value)
     })
     this.selections = selections(document).subscribe
       next: (range) ->
@@ -100,8 +104,20 @@ module.exports = class Guest extends Annotator
       metadataPromise = Promise.resolve(@plugins.PDF.getMetadata())
       uriPromise = Promise.resolve(@plugins.PDF.uri())
     else if @plugins.Document?
-      uriPromise = Promise.resolve(@plugins.Document.uri())
-      metadataPromise = Promise.resolve(@plugins.Document.metadata)
+
+      # Checking if we are on youtube
+      #FIXME: Capture & Handle SPF history changed navigation event on Youtube in the browser-extension code
+      
+      if document.location.href.includes("youtube.com")
+        uriPromise = Promise.resolve(decodeURIComponent(window.location.href))        
+        metadataPromise = Promise.resolve({
+          title: document.title
+          link: [{href: decodeURIComponent(window.location.href)}]
+          })
+
+      else
+        uriPromise = Promise.resolve(@plugins.Document.uri())
+        metadataPromise = Promise.resolve(@plugins.Document.metadata)
     else
       uriPromise = Promise.reject()
       metadataPromise = Promise.reject()

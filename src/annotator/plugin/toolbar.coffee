@@ -14,6 +14,7 @@ makeButton = (item) ->
 
 module.exports = class Toolbar extends Annotator.Plugin
   HIDE_CLASS = 'annotator-hide'
+  IDLIST = []
 
   events:
     'setVisibleHighlights': 'onSetVisibleHighlights'
@@ -50,6 +51,49 @@ module.exports = class Toolbar extends Annotator.Plugin
           event.stopPropagation()
           state = not @annotator.visibleHighlights
           @annotator.setVisibleHighlights state
+    ,
+      "title": "Youtube Recording"
+      "class": "h-icon-note"
+      "name": "insert-video"
+      "on":
+        "click": (event) =>
+          event.preventDefault()
+          event.stopPropagation()
+          uri = document.location.href
+          val = {}
+
+          #On youtube
+          onYT = uri.includes("youtube.com")
+
+          if onYT
+            ytPlayer = document.getElementById("movie_player")
+
+            if IDLIST.length > 0
+              endTime = ytPlayer.getCurrentTime()
+              IDLIST[0].endtime = endTime
+
+              @annotator.createAnnotation(viddata: IDLIST)
+              IDLIST = []
+
+            else
+              startTime = ytPlayer.getCurrentTime()
+
+              #set endtime to video duration by default
+              endTime = ytPlayer.getDuration()
+
+              #Refer to paramlist code later
+
+              val.starttime = startTime
+              val.endtime = endTime
+              val.uri = uri
+              IDLIST.push(val)
+
+              @annotator.createAnnotation(viddata: IDLIST)
+              IDLIST = []
+          else
+            alert("Works on youtube only")
+
+          @annotator.show()          
 #    ,
 #      "title": "New Page Note"
 #      "class": "h-icon-note"

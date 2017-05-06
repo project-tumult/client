@@ -49,6 +49,9 @@ module.exports = class Host extends Guest
       if !annotation.$highlight
         app[0].contentWindow.focus()
 
+    this.on 'siteNavigatedEvent', (value) ->
+      app[0].contentWindow.focus()
+
   destroy: ->
     @frame.remove()
     super

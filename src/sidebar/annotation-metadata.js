@@ -127,9 +127,12 @@ function isPublic(annotation) {
  * which refers to another annotation.
  */
 function hasSelector(annotation) {
-  return !!(annotation.target &&
-            annotation.target.length > 0 &&
-            annotation.target[0].selector);
+  // return !!(annotation.target &&
+  //           annotation.target.length > 0 &&
+  //           annotation.target[0].selector);
+
+
+  return true; //bypassing this check for renoted. All page notes will be treated as annotations only
 }
 
 /**
@@ -146,17 +149,21 @@ function isWaitingToAnchor(annotation) {
 
 /** Return `true` if the given annotation is an orphan. */
 function isOrphan(annotation) {
-  return hasSelector(annotation) && annotation.$orphan;
+//  return hasSelector(annotation) && annotation.$orphan;
+    return false; //All Orphans will be treated as annotations only
 }
 
 /** Return `true` if the given annotation is a page note. */
 function isPageNote(annotation) {
   return !hasSelector(annotation) && !isReply(annotation);
+
+  //this will always return false as hasSelector is always false
 }
 
 /** Return `true` if the given annotation is a top level annotation, `false` otherwise. */
 function isAnnotation(annotation) {
-  return !!(hasSelector(annotation) && !isOrphan(annotation));
+//  return !!(hasSelector(annotation) && !isOrphan(annotation));
+    return !isOrphan(annotation);
 }
 
 /** Return a numeric key that can be used to sort annotations by location.

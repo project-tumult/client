@@ -103,6 +103,48 @@ function Adder(container, options) {
   var self = this;
   var element = createAdderDOM(container);
 
+
+  //Adding the SPFevent emition here
+  var currentState ="";
+  var docURI = document.location.href;
+
+
+  /** Emit the SiteNavigatedEvent on different sites **/
+
+  //On VIMEO videos
+  if(docURI.indexOf("vimeo.com") !==-1) {
+    var currClipId ="";
+
+    setInterval(function() {
+      var docState = window.history.state;
+      if(docState) {
+        if(currClipId != docState.clip.id)
+          currClipId = docState.clip.id;
+          options.onSiteNavigatedEvent(document.location.href);
+      }
+    }, 5000);
+  }
+
+
+  //On youtube videos
+  if(docURI.indexOf("youtube.com") !==-1) {
+
+    //Get the current player reference and send the event when the player is PAUSED
+    var ytPlayer = document.getElementById("movie_player");
+    ytPlayer.addEventListener("onStateChange", function(event) {
+      options.onPlayerStateChange(event);
+    });
+
+
+    setInterval(function() {
+      if(currentState != history.state["spf-referer"]) {
+        currentState = history.state["spf-referer"];
+        options.onSiteNavigatedEvent(document.location.href);
+
+      }
+    }, 5000);
+  }
+
   Object.assign(container.style, {
     // Set initial style. The adder is hidden using the `visibility`
     // property rather than `display` so that we can compute its size in order to

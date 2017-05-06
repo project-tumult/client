@@ -169,6 +169,18 @@ module.exports = angular.module('h', [
   .directive('spinner', require('./directive/spinner'))
   .directive('statusButton', require('./directive/status-button'))
   .directive('windowScroll', require('./directive/window-scroll'))
+  .directive('vimeoFrame',['vimeoService', function(vimeoService) {
+    return {
+      restrict: 'E',
+      bindings: {
+        trackUrl : '=',
+        playerId : '=',
+      },
+      template: require('./templates/vimeo-frame.html'),
+    };
+  }
+  ])
+
 
   .service('analytics', require('./analytics'))
   .service('annotationMapper', require('./annotation-mapper'))
@@ -195,6 +207,22 @@ module.exports = angular.module('h', [
   .service('unicode', require('./unicode'))
   .service('viewFilter', require('./view-filter'))
 
+  .provider('vimeoService', function() {
+    //constructor function of the Provider
+    var apiUrl = "https://player.vimeo.com/api/player.js";
+    
+    //$get gets automatically executed by AngularJS
+    this.$get = function() {
+
+      var tag = document.createElement('script');
+      tag.async = true;
+      tag.src = apiUrl;
+      var firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+    };
+  })
+
   .factory('store', require('./store'))
 
   .value('Discovery', require('../shared/discovery'))
@@ -204,6 +232,12 @@ module.exports = angular.module('h', [
   .value('settings', settings)
   .value('time', require('./time'))
   .value('urlEncodeFilter', require('./filter/url').encode)
+
+
+  //Whitelisting youtube embedded urls
+  .config(function($sceDelegateProvider) {
+    $sceDelegateProvider.resourceUrlWhitelist(['**']);
+  })
 
   .config(configureHttp)
   .config(configureLocation)

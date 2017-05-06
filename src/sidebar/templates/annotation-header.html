@@ -47,3 +47,8 @@
     href="vm.htmlLink()"
     ng-if="!vm.editing() && vm.updated()"></timestamp>
 </header>
+
+  <!-- Youtube Embedding code -->
+<iframe src='{{ vm.videoUrl() }}' id=' {{ vm.getPlayerId() }}' frameborder="0" allowfullscreen>
+    
+</iframe>

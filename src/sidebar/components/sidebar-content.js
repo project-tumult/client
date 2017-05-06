@@ -179,7 +179,8 @@ function SidebarContentController(
         if (uris.indexOf(uri) === -1) {
           uris.push(uri);
         }
-      }
+
+      }      
       return uris;
     }, []);
 
@@ -211,6 +212,24 @@ function SidebarContentController(
 
     streamer.connect();
   });
+
+
+  //On every NAvigationEvent, load annotations again for the new URI supplied in the val
+  $scope.$on('siteNavigatedEvent', function(event, val) {
+    streamer.reconnect();
+    var group = annotationUI.hasSelectedAnnotations() ?
+      null : groups.focused().id;
+
+      //Prepare the URI Array to supply to the _loadAnnotationsFor method
+      var vidUris = [];
+      vidUris[0] = val;
+
+      _loadAnnotationsFor(vidUris, group);
+      streamFilter.resetFilter().addClause('/uri', 'one_of', vidUris);
+      streamer.setConfig('filter', {filter: streamFilter.getFilter()});
+  });
+
+
 
   // If the user is logged in, we connect nevertheless
   if (this.auth.status === 'logged-in') {

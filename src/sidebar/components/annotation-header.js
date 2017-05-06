@@ -5,7 +5,7 @@ var memoize = require('../util/memoize');
 var persona = require('../filter/persona');
 
 // @ngInject
-function AnnotationHeaderController(groups, settings, serviceUrl) {
+function AnnotationHeaderController($rootScope, groups, settings, serviceUrl) {
   var self = this;
 
   this.user = function () {
@@ -41,6 +41,40 @@ function AnnotationHeaderController(groups, settings, serviceUrl) {
     }
     return '';
   };
+
+  $rootScope.$on('playerStateChanged', function(event, value) {
+    console.log("Now the playerState is available in the annotation-header " + value);
+  });
+
+  //adding video related methods
+  this.videoUrl = function() {
+    if(self.annotation.hasOwnProperty('viddata')) {
+
+      //Youtube code
+      var videoData = self.annotation.viddata;
+      var vidUrl = videoData[0].uri;
+      var id = vidUrl.split('v=')[1]
+      id = id.split('&')[0];
+
+      var starttime = Math.round(videoData[0].starttime).toString();
+      var endtime = Math.round(videoData[0].endtime).toString();
+
+      var embedUrl = "https://www.youtube.com/embed/"+id+"?start="+starttime+"&end="+endtime;
+
+      return embedUrl;
+    }
+    else {
+      return false;
+    }
+  };
+
+  //Setting iframe id same as annotation id
+  this.getPlayerId = function() {
+
+    return self.annotation.id;
+  };
+
+
 }
 
 /**

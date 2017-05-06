@@ -100,6 +100,12 @@ AnnotationSync.prototype._eventListeners = {
     }
     return this._mkCallRemotelyAndParseResults('beforeCreateAnnotation')(annotation);
   },
+  'siteNavigatedEvent': function(uri) {
+    this._mkCallRemotelyAndParseResultsForSiteNavigation('siteNavigatedEvent')(uri);    
+  },
+  'playerStateChanged': function(value) {
+    this._mkCallRemotelyAndParseResultsPlayerEvent('playerStateChanged')(value);
+  },
 };
 
 AnnotationSync.prototype._mkCallRemotelyAndParseResults = function(method, callBack) {
@@ -116,6 +122,45 @@ AnnotationSync.prototype._mkCallRemotelyAndParseResults = function(method, callB
       };
       // Call the remote method
       _this.bridge.call(method, _this._format(annotation), wrappedCallback);
+    };
+  })(this);
+};
+
+AnnotationSync.prototype._mkCallRemotelyAndParseResultsForSiteNavigation = function(method, callBack) {
+  return (function(_this) {
+    return function(uri) {
+      // Wrap the callback function to first parse returned items
+      var wrappedCallbackNew = function(failure, results) {
+        if (failure === null) {
+          _this._parseResults(results);
+        }
+        if (typeof callBack === 'function') {
+          callBack(failure, results);
+        }
+      };
+      // Call the remote method
+      console.log("making Nav event call " + _this._formatCustomRPC(uri));
+      _this.bridge.call(method, _this._formatCustomRPC(uri), wrappedCallbackNew);
+    };
+  })(this);
+};
+
+
+//PlayerStateChange event
+AnnotationSync.prototype._mkCallRemotelyAndParseResultsPlayerEvent = function(method, callBack) {
+  return (function(_this) {
+    return function(value) {
+      // Wrap the callback function to first parse returned items
+      var wrappedCallbackNew = function(failure, results) {
+        if (failure === null) {
+          _this._parseResults(results);
+        }
+        if (typeof callBack === 'function') {
+          callBack(failure, results);
+        }
+      };
+      // Call the remote method
+      _this.bridge.call(method, _this._formatCustomRPC(value), wrappedCallbackNew);
     };
   })(this);
 };
@@ -167,5 +212,15 @@ AnnotationSync.prototype._format = function(ann) {
     msg: ann,
   };
 };
+
+// Format an annotation into an RPC message body with the provided formatter.
+AnnotationSync.prototype._formatCustomRPC = function(val) {
+  var tag = window.btoa(Math.random());
+  return {
+    tag: tag,
+    msg: val,
+  };
+};
+
 
 module.exports = AnnotationSync;

@@ -124,6 +124,19 @@ function FrameSync($rootScope, $window, Discovery, annotationUI, bridge) {
       $rootScope.$broadcast(events.BEFORE_ANNOTATION_CREATED, annot);
     });
 
+
+    //On Site Navigation Event broadcast to the rootScope and clearAnnotations
+    bridge.on('siteNavigatedEvent', function(event, channel) {
+      $rootScope.$broadcast("siteNavigatedEvent", event.msg);
+      annotationUI.clearAnnotations();
+
+    });
+
+    //playerStateChanged event happened, just set to the $rootScope of the app
+    bridge.on('playerStateChanged', function(event, channel) {
+      $rootScope.$broadcast("playerStateChanged", event.msg);
+    });    
+
     // Anchoring an annotation in the frame completed
     bridge.on('sync', function (events_) {
       events_.forEach(function (event) {
