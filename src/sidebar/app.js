@@ -169,18 +169,20 @@ module.exports = angular.module('h', [
   .directive('spinner', require('./directive/spinner'))
   .directive('statusButton', require('./directive/status-button'))
   .directive('windowScroll', require('./directive/window-scroll'))
-  .directive('vimeoFrame',['vimeoService', function(vimeoService) {
-    return {
-      restrict: 'E',
-      bindings: {
-        trackUrl : '=',
-        playerId : '=',
-      },
-      template: require('./templates/vimeo-frame.html'),
-    };
-  }
-  ])
+  .directive('videoFrame', require('./directive/video-frame'))
+  // .directive('videoFrame', function (vimeoService) {
+  //   return {
+  //     restrict: 'E',
 
+  //     link: function (scope, elem, attr) {
+
+  //       console.log(elem[0].children[0]);
+
+  //       var vmPlayer = new Vimeo.Player(elem[0].children[0]);
+  //     },
+  //     template: require('./templates/video-frame.html'),
+  //   };
+  // })
 
   .service('analytics', require('./analytics'))
   .service('annotationMapper', require('./annotation-mapper'))
@@ -207,21 +209,38 @@ module.exports = angular.module('h', [
   .service('unicode', require('./unicode'))
   .service('viewFilter', require('./view-filter'))
 
-  .provider('vimeoService', function() {
-    //constructor function of the Provider
-    var apiUrl = "https://player.vimeo.com/api/player.js";
+  // .provider('vimeoService', function() {
+  //   //constructor function of the Provider
+  //   var apiUrl = "https://player.vimeo.com/api/player.js";
     
-    //$get gets automatically executed by AngularJS
-    this.$get = function() {
+  //   //$get gets automatically executed by AngularJS
+  //   this.$get = function() {
 
-      var tag = document.createElement('script');
-      tag.async = true;
-      tag.src = apiUrl;
-      var firstScriptTag = document.getElementsByTagName('script')[0];
-      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+  //     var tag = document.createElement('script');
+  //     tag.async = true;
+  //     tag.src = apiUrl;
+  //     var firstScriptTag = document.getElementsByTagName('script')[0];
+  //     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-    };
-  })
+  //   };
+  // })
+  // .provider('dmService', function() {
+  //   //constructor function of the Provider
+  //   var apiUrl = "https://api.dmcdn.net/all.js";
+  //   //$get gets automatically executed by AngularJS
+    
+  //   this.$get = function() {
+
+  //     //DM.init({ apiKey: '7bfd31f1d9129b3a9be0', status: true, cookie: true });
+  //       var e = document.createElement('script');
+  //       e.async = true;
+  //       e.src = "https://api.dmcdn.net/all.js";
+
+  //       var s = document.getElementsByTagName('script')[0];
+  //       s.parentNode.insertBefore(e, s);
+           
+  //   };
+  // })
 
   .factory('store', require('./store'))
 
@@ -238,6 +257,13 @@ module.exports = angular.module('h', [
   .config(function($sceDelegateProvider) {
     $sceDelegateProvider.resourceUrlWhitelist(['**']);
   })
+  // .config(['vimeoServiceProvider', function(vimeoServiceProvider) {
+
+  // }])
+  // .config(['dmServiceProvider', function(dmServiceProvider) {
+  //   //TODO: Set the Dailymotion player API here
+
+  // }])
 
   .config(configureHttp)
   .config(configureLocation)

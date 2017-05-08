@@ -42,36 +42,59 @@ function AnnotationHeaderController($rootScope, groups, settings, serviceUrl) {
     return '';
   };
 
-  $rootScope.$on('playerStateChanged', function(event, value) {
-    console.log("Now the playerState is available in the annotation-header " + value);
-  });
-
   //adding video related methods
-  this.videoUrl = function() {
-    if(self.annotation.hasOwnProperty('viddata')) {
+  // this.videoUrl = function() {
+  //   if(self.annotation.hasOwnProperty('viddata')) {
 
-      //Youtube code
-      var videoData = self.annotation.viddata;
-      var vidUrl = videoData[0].uri;
-      var id = vidUrl.split('v=')[1]
-      id = id.split('&')[0];
+  //     //Youtube code
+  //     var videoData = self.annotation.viddata;
+  //     var vidUrl = videoData[0].uri;
 
-      var starttime = Math.round(videoData[0].starttime).toString();
-      var endtime = Math.round(videoData[0].endtime).toString();
+  //     var starttime = Math.round(videoData[0].starttime).toString();
+  //     var endtime = Math.round(videoData[0].endtime).toString();
+  //     var id;
+  //     var embedUrl;
 
-      var embedUrl = "https://www.youtube.com/embed/"+id+"?start="+starttime+"&end="+endtime;
+  //     if(vidUrl.includes("youtube.com")) {
+  //       id = vidUrl.split('v=')[1]
+  //       id = id.split('&')[0];
+  //       embedUrl = "https://www.youtube.com/embed/"+id+"?start="+starttime+"&end="+endtime;
+  //       return embedUrl;        
+  //     }
+  //     else if(vidUrl.includes("vimeo.com")) {
+  //       //Extract the video id from url
+  //       id = vidUrl.split('.com/')[1]
+  //       //Return the embdeUrl
+  //       embedUrl = "https://player.vimeo.com/video/"+id;
+  //       return embedUrl;
+  //     }
+  //     else if(vidUrl.includes("dailymotion.com")) {
+  //       //Extract the video unique idd from url
+  //       id = vidUrl.split('/video/')[1];
+  //       id = id.split('_')[0];
 
-      return embedUrl;
-    }
-    else {
-      return false;
-    }
-  };
+  //       embedUrl="https://www.dailymotion.com/embed/video/" + id;
+  //       return embedUrl;
+  //     }
+
+  //   }
+  //   else {
+  //     return false;
+  //   }
+  // };
 
   //Setting iframe id same as annotation id
   this.getPlayerId = function() {
 
-    return self.annotation.id;
+    var playerId = "vid_" + self.annotation.id;
+    return playerId;
+  };
+
+  this.isVideo = function() {
+    if(self.annotation.hasOwnProperty('viddata'))
+      return true;
+
+    return false;
   };
 
 

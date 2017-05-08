@@ -52,7 +52,7 @@ module.exports = class Toolbar extends Annotator.Plugin
           state = not @annotator.visibleHighlights
           @annotator.setVisibleHighlights state
     ,
-      "title": "Youtube Recording"
+      "title": "Video Recording"
       "class": "h-icon-note"
       "name": "insert-video"
       "on":
@@ -63,37 +63,69 @@ module.exports = class Toolbar extends Annotator.Plugin
           val = {}
 
           #On youtube
-          onYT = uri.includes("youtube.com")
+          onYT = uri.includes("youtube.com/watch")
+          onVM = uri.includes("vimeo.com/")
+          onDM = uri.includes("dailymotion.com/video/")
 
           if onYT
             ytPlayer = document.getElementById("movie_player")
 
-            if IDLIST.length > 0
-              endTime = ytPlayer.getCurrentTime()
-              IDLIST[0].endtime = endTime
+            if ytPlayer
+              if IDLIST.length > 0
+                endTime = ytPlayer.getCurrentTime()
+                IDLIST[0].endtime = endTime
 
-              @annotator.createAnnotation(viddata: IDLIST)
-              IDLIST = []
+                @annotator.createAnnotation(viddata: IDLIST)
+                IDLIST = []
 
-            else
-              startTime = ytPlayer.getCurrentTime()
+              else
+                startTime = ytPlayer.getCurrentTime()
 
-              #set endtime to video duration by default
-              endTime = ytPlayer.getDuration()
+                #set endtime to video duration by default
+                endTime = ytPlayer.getDuration()
 
-              #Refer to paramlist code later
+                #Refer to paramlist code later
 
-              val.starttime = startTime
-              val.endtime = endTime
-              val.uri = uri
-              IDLIST.push(val)
+                val.starttime = startTime
+                val.endtime = endTime
+                val.uri = uri
+                IDLIST.push(val)
 
-              @annotator.createAnnotation(viddata: IDLIST)
-              IDLIST = []
+                @annotator.createAnnotation(viddata: IDLIST)
+                IDLIST = []
+
+          else if onVM or onDM
+            videoElems = document.getElementsByTagName("video")
+
+            if videoElems.length > 0
+              player = videoElems[0]
+
+              if IDLIST.length > 0
+                endTime = player.currentTime
+                IDLIST[0].endtime = endTime
+
+                @annotator.createAnnotation(viddata: IDLIST)
+                IDLIST = []
+              else
+                startTime = player.currentTime
+
+                #set endtime to video duration by default
+                endTime = player.duration
+
+                #Refer to paramlist code later
+
+                val.starttime = startTime
+                val.endtime = endTime
+                val.uri = uri
+                IDLIST.push(val)
+
+                @annotator.createAnnotation(viddata: IDLIST)
+                IDLIST = []
+
           else
-            alert("Works on youtube only")
+            alert("Works on youtube, vimeo & dailymotion only")
 
-          @annotator.show()          
+#          @annotator.show()          
 #    ,
 #      "title": "New Page Note"
 #      "class": "h-icon-note"

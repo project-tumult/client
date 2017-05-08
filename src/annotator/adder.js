@@ -108,21 +108,78 @@ function Adder(container, options) {
   var currentState ="";
   var docURI = document.location.href;
 
+  //Creating player states as per Youtube states
+  var playerEvents = {
+    UNSTARTED: '-1',
+    ENDED: '0',
+    PLAYING: '1',
+    PAUSED: '2',
+    BUFFERING: '3',
+    CUED: '5'      
+  }
+
 
   /** Emit the SiteNavigatedEvent on different sites **/
 
-  //On VIMEO videos
-  if(docURI.indexOf("vimeo.com") !==-1) {
-    var currClipId ="";
 
-    setInterval(function() {
-      var docState = window.history.state;
-      if(docState) {
-        if(currClipId != docState.clip.id)
-          currClipId = docState.clip.id;
-          options.onSiteNavigatedEvent(document.location.href);
-      }
-    }, 5000);
+  //On VIMEO & DAILYMOTION videos (TWITCH needs to be handled differently)
+  if(docURI.indexOf("vimeo.com") !==-1 || docURI.indexOf("dailymotion.com") !==-1) {
+
+    if(docURI.indexOf("vimeo.com/") !==-1 || docURI.indexOf("dailymotion.com/video/") !==-1) {
+      //Extract the id from the URI
+
+      var videoElems = document.getElementsByTagName("video");
+
+      if(videoElems.length > 0) {
+
+        var player = videoElems[0];
+
+        player.addEventListener("pause", function(event) {
+          options.onPlayerStateChange(playerEvents.PAUSED);
+        });
+
+        // player.addEventListener("progress", function(event) {
+        //   options.onPlayerStateChange(playerEvents.BUFFERING);
+        // });   
+
+        //This is same as play event
+        player.addEventListener("playing", function(event) {
+          options.onPlayerStateChange(playerEvents.PLAYING);
+        });    
+   
+
+        player.addEventListener("canplay", function(event) {
+          options.onPlayerStateChange(playerEvents.CUED);
+        });  
+
+        player.addEventListener("loadstart", function(event) {
+          options.onPlayerStateChange(playerEvents.UNSTARTED);
+        });   
+
+        player.addEventListener("ended", function(event) {
+          options.onPlayerStateChange(playerEvents.ENDED);
+        });  
+      }                    
+
+    }
+
+    //Handling navigation on vimeo through change in history clipid
+    //Dailymotion reloads the tab on each video load so no need to watch for history events
+    if(docURI.indexOf("vimeo.com") !==-1 ) {
+
+      var currClipId ="";
+
+      setInterval(function() {
+        var docState = window.history.state;
+        if(docState) {
+          if(currClipId != docState.clip.id) {
+            currClipId = docState.clip.id;
+            options.onSiteNavigatedEvent(document.location.href);
+          }
+        }
+      }, 2000);
+    }
+
   }
 
 
@@ -143,7 +200,7 @@ function Adder(container, options) {
         options.onSiteNavigatedEvent(document.location.href);
 
       }
-    }, 5000);
+    }, 2000);
   }
 
   Object.assign(container.style, {

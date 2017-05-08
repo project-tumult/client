@@ -108,13 +108,16 @@ module.exports = class Guest extends Annotator
       # Checking if we are on youtube
       #FIXME: Capture & Handle SPF history changed navigation event on Youtube in the browser-extension code
       
-      if document.location.href.includes("youtube.com")
+      onYT = document.location.href.includes("youtube.com")
+      onVM = document.location.href.includes("vimeo.com")
+      onDM = document.location.href.includes("dailymotion.com")
+
+      if onYT or onVM or onDM
         uriPromise = Promise.resolve(decodeURIComponent(window.location.href))        
         metadataPromise = Promise.resolve({
           title: document.title
           link: [{href: decodeURIComponent(window.location.href)}]
           })
-
       else
         uriPromise = Promise.resolve(@plugins.Document.uri())
         metadataPromise = Promise.resolve(@plugins.Document.metadata)
