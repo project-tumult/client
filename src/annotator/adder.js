@@ -107,6 +107,7 @@ function Adder(container, options) {
   //Adding the SPFevent emition here
   var currentState ="";
   var docURI = document.location.href;
+  var eventObj = {};  //Object sent with the state change events
 
   //Creating player states as per Youtube states
   var playerEvents = {
@@ -117,6 +118,7 @@ function Adder(container, options) {
     BUFFERING: '3',
     CUED: '5'      
   }
+
 
 
   /** Emit the SiteNavigatedEvent on different sites **/
@@ -134,8 +136,14 @@ function Adder(container, options) {
 
         var player = videoElems[0];
 
+        //Build the object to be sent with the event
+        
+
         player.addEventListener("pause", function(event) {
-          options.onPlayerStateChange(playerEvents.PAUSED);
+          eventObj.currentTime = player.currentTime;
+          eventObj.playbackRate = player.playbackRate;
+          eventObj.playerState = playerEvents.PAUSED;
+          options.onPlayerStateChange(eventObj);
         });
 
         // player.addEventListener("progress", function(event) {
@@ -144,20 +152,33 @@ function Adder(container, options) {
 
         //This is same as play event
         player.addEventListener("playing", function(event) {
-          options.onPlayerStateChange(playerEvents.PLAYING);
+          eventObj.currentTime = player.currentTime;
+          eventObj.playbackRate = player.playbackRate;
+          eventObj.playerState = playerEvents.PLAYING;
+          options.onPlayerStateChange(eventObj);
         });    
    
 
         player.addEventListener("canplay", function(event) {
-          options.onPlayerStateChange(playerEvents.CUED);
+          eventObj.currentTime = player.currentTime;
+          eventObj.playbackRate = player.playbackRate;
+          eventObj.playerState = playerEvents.CUED;
+          options.onPlayerStateChange(eventObj);
         });  
 
+
         player.addEventListener("loadstart", function(event) {
-          options.onPlayerStateChange(playerEvents.UNSTARTED);
+          eventObj.currentTime = player.currentTime;
+          eventObj.playbackRate = player.playbackRate;
+          eventObj.playerState = playerEvents.BUFFERING;
+          options.onPlayerStateChange(eventObj);
         });   
 
         player.addEventListener("ended", function(event) {
-          options.onPlayerStateChange(playerEvents.ENDED);
+          eventObj.currentTime = player.currentTime;
+          eventObj.playbackRate = player.playbackRate;
+          eventObj.playerState = playerEvents.ENDED;
+          options.onPlayerStateChange(eventObj);
         });  
       }                    
 
@@ -187,10 +208,13 @@ function Adder(container, options) {
   if(docURI.indexOf("youtube.com") !==-1) {
 
     if(docURI.indexOf("youtube.com/watch?v=") !==-1) {
-      //Get the current player reference and send the event when the player is PAUSED
+      //Get the current player reference and send the event when the player state is changed
       var ytPlayer = document.getElementById("movie_player");
       ytPlayer.addEventListener("onStateChange", function(event) {
-        options.onPlayerStateChange(event);
+        eventObj.currentTime = ytPlayer.getCurrentTime();
+        eventObj.playbackRate = ytPlayer.getPlaybackRate();
+        eventObj.playerState = ytPlayer.getPlayerState();
+        options.onPlayerStateChange(eventObj);
       });
     }
 

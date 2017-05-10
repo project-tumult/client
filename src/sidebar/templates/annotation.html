@@ -44,9 +44,12 @@
       read-only="!vm.editing()">
       </video-markdown> </b>
       <br>
-      <b> End Time: <video-markdown text="vm.getEndTime()"
+      <b> End Time: <video-markdown ng-if="!vm.isNewAnnotation" text="vm.getEndTime()"
       on-edit-text="vm.setEndTime(text)"
-      read-only="!vm.editing()"></video-markdown></b> 
+      read-only="!vm.editing()"></video-markdown>
+      <label ng-if="vm.isNewAnnotation"> {{ vm.getCurrentTime() }} </label>
+
+      </b> 
       <br>  
     </span>
 

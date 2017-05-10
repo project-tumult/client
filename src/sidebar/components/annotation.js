@@ -47,7 +47,7 @@ function secondsToString(seconds) {
 
 // @ngInject
 function AnnotationController(
-  $document, $rootScope, $scope, $timeout, $window, analytics, annotationUI,
+  $document, $rootScope, $scope, $timeout, $window, analytics, annotationUI, $interval,
   annotationMapper, drafts, flash, features, groups, permissions, serviceUrl,
   session, settings, store, streamer) {
 
@@ -115,6 +115,18 @@ function AnnotationController(
 
     /** True if the 'Share' dialog for this annotation is currently open. */
     self.showShareDialog = false;
+
+    self.isNewAnnotation = isNew(self.annotation);
+
+    //Setting the player parameters on a new annotation with video
+    if(self.isNewAnnotation && self.isVideo()) {
+      self.startTime = self.annotation.viddata[0].starttime;
+      self.endTime = self.annotation.viddata[0].endtime;
+      self.currentTime = self.startTime;
+      self.playerState = self.annotation.viddata[0].playerState;
+      self.playbackRate = self.annotation.viddata[0].playbackRate;      
+    }
+    
 
     /**
       * `true` if this AnnotationController instance was created as a result of
@@ -404,6 +416,10 @@ function AnnotationController(
       return Promise.resolve();
     }
 
+    //Update the end time as per the current time
+    if(self.isNewAnnotation && self.isVideo())
+      self.annotation.viddata[0].endtime = self.currentTime;
+
     var updatedModel = updateModel(self.annotation, self.state(), permissions);
 
     // Optimistically switch back to view mode and display the saving
@@ -556,10 +572,40 @@ function AnnotationController(
   };
 
   //Video annotations related methods
+  // this.startTime;
+  // this.endTime;
+  // this.currentTime;
+  // this.playerState;
+  // this.playbackRate;
 
-  this.startTime;
-  this.endTime;
 
+  //Handling the playerStateChange Event
+  $rootScope.$on('playerStateChanged', function(event, msg) {
+    self.playerState = msg.playerState;
+    self.playbackRate = msg.playbackRate;
+    self.currentTime = msg.currentTime;
+  });
+
+
+  //Update current time every interval based on new playerRate and state
+  var incrementTime = $interval(function() {
+    if(self.playerState == 1) {
+      self.currentTime = self.currentTime + self.playbackRate;
+    }
+    else {
+      self.currentTime = self.currentTime;
+    }
+
+  }, (self.playbackRate * 1000));
+
+
+  //used to display current time on the template page
+  this.getCurrentTime = function() {
+    return secondsToString(self.currentTime);
+  };
+
+
+  //Annotation is a video
   this.isVideo = function() {
     if(self.annotation.hasOwnProperty('viddata'))
       return true;

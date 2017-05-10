@@ -68,8 +68,8 @@ module.exports = class Guest extends Annotator
         Annotator.Util.getGlobal().getSelection().removeAllRanges()
       onSiteNavigatedEvent: (uri) ->
         self.publish('siteNavigatedEvent', uri)  
-      onPlayerStateChange: (value) ->
-        self.publish('playerStateChanged', value)
+      onPlayerStateChange: (eventObj) ->
+        self.publish('playerStateChanged', eventObj)
     })
     this.selections = selections(document).subscribe
       next: (range) ->

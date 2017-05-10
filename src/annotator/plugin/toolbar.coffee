@@ -80,15 +80,23 @@ module.exports = class Toolbar extends Annotator.Plugin
 
               else
                 startTime = ytPlayer.getCurrentTime()
+                playerState = ytPlayer.getPlayerState()
+                playbackRate = ytPlayer.getPlaybackRate()
+                
+                # endtime starts as starttime and increments at playbackRate
+                endTime = startTime
+
 
                 #set endtime to video duration by default
-                endTime = ytPlayer.getDuration()
+                #endTime = ytPlayer.getDuration()
 
                 #Refer to paramlist code later
 
                 val.starttime = startTime
                 val.endtime = endTime
                 val.uri = uri
+                val.playbackRate = playbackRate
+                val.playerState = playerState
                 IDLIST.push(val)
 
                 @annotator.createAnnotation(viddata: IDLIST)
@@ -108,15 +116,23 @@ module.exports = class Toolbar extends Annotator.Plugin
                 IDLIST = []
               else
                 startTime = player.currentTime
+                playerState = player.playerState
+                playbackRate = player.playbackRate
+                
+                # endtime starts as starttime and increments at playbackRate
+                endTime = startTime
+
 
                 #set endtime to video duration by default
-                endTime = player.duration
+                #endTime = player.duration
 
                 #Refer to paramlist code later
 
                 val.starttime = startTime
                 val.endtime = endTime
                 val.uri = uri
+                val.playbackRate = playbackRate
+                val.playerState = playerState                
                 IDLIST.push(val)
 
                 @annotator.createAnnotation(viddata: IDLIST)

@@ -103,8 +103,10 @@ AnnotationSync.prototype._eventListeners = {
   'siteNavigatedEvent': function(uri) {
     this._mkCallRemotelyAndParseResultsForSiteNavigation('siteNavigatedEvent')(uri);    
   },
-  'playerStateChanged': function(value) {
-    this._mkCallRemotelyAndParseResultsPlayerEvent('playerStateChanged')(value);
+  'playerStateChanged': function(eventObj) {
+    //Parse and make RPC just like an annotation object
+    //this._mkCallRemotelyAndParseResultsPlayerEvent('playerStateChanged')(eventObj);
+    this._mkCallRemotelyAndParseResults('playerStateChanged')(eventObj);
   },
 };
 
@@ -139,7 +141,6 @@ AnnotationSync.prototype._mkCallRemotelyAndParseResultsForSiteNavigation = funct
         }
       };
       // Call the remote method
-      console.log("making Nav event call " + _this._formatCustomRPC(uri));
       _this.bridge.call(method, _this._formatCustomRPC(uri), wrappedCallbackNew);
     };
   })(this);
@@ -147,23 +148,23 @@ AnnotationSync.prototype._mkCallRemotelyAndParseResultsForSiteNavigation = funct
 
 
 //PlayerStateChange event
-AnnotationSync.prototype._mkCallRemotelyAndParseResultsPlayerEvent = function(method, callBack) {
-  return (function(_this) {
-    return function(value) {
-      // Wrap the callback function to first parse returned items
-      var wrappedCallbackNew = function(failure, results) {
-        if (failure === null) {
-          _this._parseResults(results);
-        }
-        if (typeof callBack === 'function') {
-          callBack(failure, results);
-        }
-      };
-      // Call the remote method
-      _this.bridge.call(method, _this._formatCustomRPC(value), wrappedCallbackNew);
-    };
-  })(this);
-};
+// AnnotationSync.prototype._mkCallRemotelyAndParseResultsPlayerEvent = function(method, callBack) {
+//   return (function(_this) {
+//     return function(value) {
+//       // Wrap the callback function to first parse returned items
+//       var wrappedCallbackNew = function(failure, results) {
+//         if (failure === null) {
+//           _this._parseResults(results);
+//         }
+//         if (typeof callBack === 'function') {
+//           callBack(failure, results);
+//         }
+//       };
+//       // Call the remote method
+//       _this.bridge.call(method, _this._formatCustomRPC(value), wrappedCallbackNew);
+//     };
+//   })(this);
+// };
 
 // Parse returned message bodies to update cache with any changes made remotely
 AnnotationSync.prototype._parseResults = function(results) {
