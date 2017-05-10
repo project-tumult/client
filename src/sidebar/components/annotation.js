@@ -23,6 +23,28 @@ function updateModel(annotation, changes, permissions) {
   });
 }
 
+function secondsToString(seconds) {
+  seconds = Math.floor(seconds);
+  var hr = Math.floor(seconds/3600);
+  var hr_mod = seconds % 3600;
+  var min = Math.floor(hr_mod/60);
+  var sec = hr_mod % 60;
+
+  if(hr < 10)
+    hr = "0"+hr;
+  if(min < 10)
+    min = "0"+min;
+  if(sec<10)
+    sec = "0"+sec;
+
+  // This formats your string to HH:MM:SS
+  var t = hr+":"+min+":"+sec;
+  if (hr=="00") {
+    t=min+":"+sec;
+  }
+  return t;  
+}
+
 // @ngInject
 function AnnotationController(
   $document, $rootScope, $scope, $timeout, $window, analytics, annotationUI,
@@ -532,6 +554,122 @@ function AnnotationController(
                                        self.annotation.user),
     };
   };
+
+  //Video annotations related methods
+
+  this.startTime;
+  this.endTime;
+
+  this.isVideo = function() {
+    if(self.annotation.hasOwnProperty('viddata'))
+      return true;
+
+    return false;
+  };
+
+  this.getStartTime = function() {
+    if(self.isVideo()) {
+
+      var videoData = self.annotation.viddata;
+      var seconds = videoData[0].starttime;
+      self.startTime = secondsToString(seconds)
+      return self.startTime;
+    }
+    return -1;
+  };
+
+  this.getEndTime = function() {
+    if(self.isVideo()) {
+
+      var videoData = self.annotation.viddata;
+      var seconds = videoData[0].endtime;
+      self.endTime = secondsToString(seconds)
+      return self.endTime;      
+    }
+    return -1;
+  };  
+
+  this.getDuration = function() {
+    if(self.isVideo()) {
+
+      var videoData = self.annotation.viddata;
+      var start =videoData[0].starttime;
+      var end =videoData[0].endtime;
+      var seconds = end - start;
+      return secondsToString(seconds);      
+    }
+    return -1;
+  };
+
+  this.getterSetterForStartTime =function(starttime) {
+    if (angular.isDefined(starttime)) {
+      //self.setStartTime(starttime);
+      return starttime;
+    } 
+    else {    
+      return self.getStartTime();
+    }
+  };
+
+  this.getterSetterForEndTime =function(endtime) {
+    if (angular.isDefined(endtime)) {
+      self.setEndTime(endtime);
+    } 
+    else {    
+      return self.getEndTime();
+    }
+  };
+
+
+  //Set start time of the video
+  this.setStartTime = function (starttime) {
+    var val = starttime.split(":");
+    var retstarttime=0;
+    if (val.length == 2){
+        retstarttime = (parseInt(val[0])*60 + parseInt(val[1])).toString();
+     }
+    if (val.length == 3){
+        retstarttime = (parseInt(val[0])*3600 + parseInt(val[1])*60 + parseInt(val[2])).toString();
+     }
+
+     if(self.isVideo()) {
+
+      var viddata=self.annotation.viddata;
+      viddata[0].starttime = retstarttime ;   
+      drafts.update(self.annotation, {
+        isPrivate: self.state().isPrivate,
+        tags: self.state().tags,
+        text: self.state().text,
+        viddata: viddata,
+      });
+    }  
+  }; 
+
+  //Set end time of the video
+  this.setEndTime = function (endtime) {
+    var val = endtime.split(":");
+    var retendtime=0;
+    if (val.length == 2){
+        retendtime = (parseInt(val[0])*60 + parseInt(val[1])).toString();
+     }
+    if (val.length == 3){
+        retendtime = (parseInt(val[0])*3600 + parseInt(val[1])*60 + parseInt(val[2])).toString();
+     }
+
+     if(self.isVideo()) {
+
+      var viddata=self.annotation.viddata;
+      viddata[0].endtime = retendtime ;   
+      drafts.update(self.annotation, {
+        isPrivate: self.state().isPrivate,
+        tags: self.state().tags,
+        text: self.state().text,
+        viddata: viddata,
+      });
+    }  
+  };    
+
+
 
   /**
    * Return true if the CC 0 license notice should be shown beneath the

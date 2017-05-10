@@ -1,0 +1,9 @@
+<input class="form-input form-text js-markdown-input"
+          ng-show="vm.showEditor()"
+          ng-click="$event.stopPropagation()"></input>
+
+
+<span class="markdown-body js-markdown-preview"
+     ng-class="(vm.preview && 'markdown-preview') || vm.customTextClass"
+     ng-dblclick="vm.togglePreview()"
+     ng-show="!vm.showEditor()"></span>

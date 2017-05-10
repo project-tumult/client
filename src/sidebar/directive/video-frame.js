@@ -18,6 +18,7 @@ function extractIdFromUrl(vidUrl) {
     id = id.split('_')[0];
     return id;
   }
+  return "fake_id";
 
 };
 
@@ -207,7 +208,6 @@ function extractIdFromUrl(vidUrl) {
         //My developer API key
         DM.init({ apiKey: '7bfd31f1d9129b3a9be0', status: true, cookie: true });
 
-        console.log("Reached here after DM");
         var player = DM.player(elem[0], {
           video: sourceId,
           params: {
@@ -238,9 +238,29 @@ function extractIdFromUrl(vidUrl) {
       }
       //YOUTUBE CODE
       else if(vidUrl.includes("youtube.com")) {
+        //Using the iframe solution on Youtube as the YT API was causing annoying issues
+        var iframe = document.createElement('iframe');
+        iframe.src = "https://www.youtube.com/embed/"+sourceId+"?start="+startTime+"&end="+endTime;
 
+        elem[0].replaceWith(iframe);
       }
 
+//       else {
+        
+//         FB.init({
+//           appId      : '1867898310150686',
+//           xfbml      : true,
+//           version    : 'v2.9'
+//         });
+
+//         var fbDiv = document.createElement('div');
+//         fbDiv.setAttribute("class", "fb-video");
+//         fbDiv.setAttribute("data-href", "https://www.facebook.com/facebook/videos/10153231379946729/");
+//         fbDiv.setAttribute("data-width", "200");
+//         fbDiv.setAttribute("data-allowfullscreen", "true");
+//         elem[0].replaceWith(fbDiv);
+
+//       }
 
     },
     template: require('../templates/video-frame.html'),

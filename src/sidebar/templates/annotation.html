@@ -6,6 +6,7 @@
 
   <annotation-header annotation="vm.annotation"
                      is-editing="vm.editing()"
+                     is-video ="vm.isVideo()"
                      is-highlight="vm.isHighlight()"
                      is-private="vm.state().isPrivate"
                      on-reply-count-click="vm.onReplyCountClick()"
@@ -31,6 +32,24 @@
 
   <!-- Body -->
   <section name="text" class="annotation-body">
+
+  <!-- Start & End Time -->
+    <span ng-if="vm.isVideo() && !vm.editing()">
+      <b> Start Time: {{ vm.getStartTime() }}  &nbsp; &nbsp; End Time: {{ vm.getEndTime() }} &nbsp; &nbsp; Duration: {{ vm.getDuration() }}</b>
+    </span>
+
+    <span ng-if="vm.isVideo() && vm.editing()">
+      <b> Start Time: <video-markdown text="vm.getStartTime()"
+      on-edit-text="vm.setStartTime(text)"
+      read-only="!vm.editing()">
+      </video-markdown> </b>
+      <br>
+      <b> End Time: <video-markdown text="vm.getEndTime()"
+      on-edit-text="vm.setEndTime(text)"
+      read-only="!vm.editing()"></video-markdown></b> 
+      <br>  
+    </span>
+
     <excerpt enabled="!vm.editing()"
       inline-controls="false"
       on-collapsible-changed="vm.setBodyCollapsible(collapsible)"

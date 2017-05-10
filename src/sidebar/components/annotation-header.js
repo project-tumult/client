@@ -4,6 +4,7 @@ var annotationMetadata = require('../annotation-metadata');
 var memoize = require('../util/memoize');
 var persona = require('../filter/persona');
 
+
 // @ngInject
 function AnnotationHeaderController($rootScope, groups, settings, serviceUrl) {
   var self = this;
@@ -90,14 +91,6 @@ function AnnotationHeaderController($rootScope, groups, settings, serviceUrl) {
     return playerId;
   };
 
-  this.isVideo = function() {
-    if(self.annotation.hasOwnProperty('viddata'))
-      return true;
-
-    return false;
-  };
-
-
 }
 
 /**
@@ -123,6 +116,8 @@ module.exports = {
 
     /** True if the user is currently editing the annotation. */
     isEditing: '<',
+
+    isVideo: '<',
 
     /**
      * True if the annotation is a highlight.
